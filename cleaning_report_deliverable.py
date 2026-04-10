@@ -3,8 +3,8 @@ from pathlib import Path
 listings_raw = []
 sellings_raw = []
 
-listings_clean = pd.read_csv('list_clean')
-sellings_clean = pd.read_csv('sold_clean')
+listings_clean = pd.read_csv('list_clean.csv')
+sellings_clean = pd.read_csv('sold_clean.csv')
 
 for f in Path("raw").iterdir():
     if f.name.startswith('CRMLSListing') and f.name.endswith('.csv'):

@@ -11,8 +11,8 @@ mortgage_monthly = (
     .mean().reset_index()
 )
 
-sold = pd.read_csv('sold_clean')
-listings = pd.read_csv('list_clean')
+sold = pd.read_csv('sold_clean.csv')
+listings = pd.read_csv('list_clean.csv')
 
 
 # Sold dataset — key off CloseDate

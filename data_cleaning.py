@@ -56,7 +56,7 @@ sellings = pd.concat([
     for df in sellings
 ], ignore_index=True)
 
-listings.to_csv('list_clean', index=False)
-sellings.to_csv('sold_clean', index=False)
+listings.to_csv('list_clean.csv', index=False)
+sellings.to_csv('sold_clean.csv', index=False)
 
 
