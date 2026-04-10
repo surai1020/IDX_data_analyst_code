@@ -1,12 +1,13 @@
 import pandas as pd
-listing_1 = pd.read_csv('raw/CRMLSListing202402.csv')
-sold_1 = pd.read_csv('raw/CRMLSSold202402.csv')
-listing_2 = pd.read_csv('raw/CRMLSListing202602.csv')
-sold_2 = pd.read_csv('raw/CRMLSSold202602.csv')
+from pathlib import Path
 
-pd.set_option('display.max_columns', None)
-listings = [listing_1, listing_2]
-sellings = [sold_1, sold_2]
+listings = []
+sellings = []
+for f in Path("raw").iterdir():
+    if f.name.startswith('CRMLSListing') and f.name.endswith('.csv'):
+        listings.append(pd.read_csv(f))
+    elif f.name.startswith('CRMLSSold') and f.name.endswith('.csv'):
+        sellings.append(pd.read_csv(f))
 
 def remove_duplicates(df):
     drop = []
@@ -20,15 +21,42 @@ def correct_types(df):
         df[col] = pd.to_datetime(df[col])
     return df
 def added_cols(df):
-    df['PriceRatio'] = df['ClosePrice']/df['OriginalListPrice']
-    df['PricePerSqFt'] = df['ClosePrice']/df['LivingArea']
-    df['YearMonth'] = df['CloseDate'].dt.to_period('M')
+    if 'ClosePrice' in df.columns and 'OriginalListPrice' in df.columns:
+        df['PriceRatio'] = df['ClosePrice'] / df['OriginalListPrice'].replace(0, pd.NA)
+
+    if 'ClosePrice' in df.columns and 'LivingArea' in df.columns:
+        df['PricePerSqFt'] = df['ClosePrice'] / df['LivingArea'].replace(0, pd.NA)
+
+    # YearMonth
+    if 'CloseDate' in df.columns:
+        df['YearMonth'] = df['CloseDate'].dt.to_period('M')
+
     return df
 
-listings = pd.concat([added_cols(correct_types(remove_duplicates(df.dropna(axis=1, how = 'all')))) for df in listings])
-sellings = pd.concat([added_cols(correct_types(remove_duplicates(df.dropna(axis=1, how = 'all')))) for df in sellings])
 
-listings.to_csv('list_clean')
-sellings.to_csv('sold_clean')
+listings = pd.concat([
+    added_cols(
+        correct_types(
+            remove_duplicates(
+                df.dropna(axis=1, thresh=len(df) * 0.1)
+            )
+        )
+    )
+    for df in listings
+], ignore_index=True)
+
+sellings = pd.concat([
+    added_cols(
+        correct_types(
+            remove_duplicates(
+                df.dropna(axis=1, thresh=len(df) * 0.1)
+            )
+        )
+    )
+    for df in sellings
+], ignore_index=True)
+
+listings.to_csv('list_clean', index=False)
+sellings.to_csv('sold_clean', index=False)
 
 

@@ -1,0 +1,12 @@
+# data files
+*.csv
+raw/
+list_clean
+sold_clean
+sold_clean_filtered.csv
+list_clean.csv
+
+# python cache
+__pycache__/
+*.pyc
+
