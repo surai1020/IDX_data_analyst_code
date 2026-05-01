@@ -73,7 +73,6 @@ def summarize_flags(df, name):
 summarize_flags(lists, "lists")
 summarize_flags(sold, "sold")
 
-
 #GEO SUMMARY
 def geo_summary(df, name):
     total_invalid = df['invalid_geo_flag'].sum()
@@ -82,10 +81,6 @@ def geo_summary(df, name):
 
 geo_summary(lists, "lists")
 geo_summary(sold, "sold")
-
-lists_clean.to_csv('listings_with_rates.csv', index=False)
-sold_clean.to_csv('sold_with_rates.csv', index=False)
-
 
 #DROPPING INVALIDS + ROW SUMMARY
 lists = lists[~lists[flag_cols].any(axis=1)].drop(columns = flag_cols)
@@ -103,4 +98,7 @@ print("Sold: before =", before_row_count['sold'],
       "| after =", after_row_count['sold'],
       "| removed =", before_row_count['sold'] - after_row_count['sold'])
 
-print("\nCleaning complete. Clean datasets saved.")
+#SAVING DATASETS
+lists.to_csv('listings_with_rates.csv', index=False)
+sold.to_csv('sold_with_rates.csv', index=False)
+print("\nDatasets saved.")
